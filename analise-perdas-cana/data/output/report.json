@@ -1,0 +1,16 @@
+[
+  {
+    "fazenda": "Fazenda A",
+    "safra": 2024,
+    "toneladas_mecanica": 1000.0,
+    "toneladas_manual": 950.0,
+    "loss": 5.0
+  },
+  {
+    "fazenda": "Sítio B",
+    "safra": 2024,
+    "toneladas_mecanica": 800.0,
+    "toneladas_manual": 780.0,
+    "loss": 2.5
+  }
+]
