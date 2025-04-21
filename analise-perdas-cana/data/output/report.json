@@ -4,13 +4,15 @@
     "safra": 2024,
     "toneladas_mecanica": 1000.0,
     "toneladas_manual": 950.0,
-    "loss": 5.0
+    "loss": 5.26,
+    "strategy": "Ajustar calibração da colhedora."
   },
   {
     "fazenda": "Sítio B",
     "safra": 2024,
     "toneladas_mecanica": 800.0,
     "toneladas_manual": 780.0,
-    "loss": 2.5
+    "loss": 2.56,
+    "strategy": "Parâmetros OK — sem ação necessária."
   }
 ]

@@ -1,0 +1,9 @@
+{
+  "engine": "sqlite",
+  "sqlite_file": "data/local.db",
+  "oracle": {
+    "username": "aluno",
+    "password": "aluno123",
+    "dsn":      "localhost:1521/XE"
+  }
+}

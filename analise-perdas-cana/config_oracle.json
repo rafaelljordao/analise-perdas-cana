@@ -1,6 +1,0 @@
-{
-  "username": "<SEU_USUARIO>",
-  "password": "<SUA_SENHA>",
-  "dsn": "<HOST:PORT/SERVICO>",
-  "encoding": "UTF-8"
-}
