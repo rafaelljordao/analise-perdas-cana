@@ -147,4 +147,3 @@ Você verá colunas como:
 
 > **Autor:** Rafael Jordão  
 > **Data:** 21/04/2025 
-```
