@@ -1,1 +1,13 @@
-touch .gitignore
+# Ignora configurações do PyCharm
+.idea/
+
+# Ignora banco SQLite temporário
+data/local.db
+data/local.db-journal
+
+# Bytecode Python
+__pycache__/
+*.py[cod]
+
+# Virtualenv
+.venv/
