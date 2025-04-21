@@ -1,51 +1,53 @@
 ```markdown
 # 📊 Análise de Perdas na Colheita de Cana‑de‑Açúcar
 
-Este projeto implementa um sistema em Python para **carregar**, **analisar**, **gerar relatórios** e **armazenar** dados de perdas na colheita de cana‑de‑açúcar. Além de calcular percentuais de perdas entre colheita manual e mecanizada, ele gera recomendações e ainda persiste os resultados em um banco (SQLite por padrão, ou Oracle se você tiver um XE configurado).
+Este projeto em Python **carrega**, **analisa**, **gera relatórios** e **persiste** dados de perdas na colheita de cana‑de‑açúcar.  
+Ele mede as diferenças entre colheita manual e mecanizada, sugere ações corretivas e salva tudo num JSON e num banco (SQLite por padrão, ou Oracle se você tiver).
 
 ---
 
 ## 🚀 Funcionalidades
 
-- **Leitura / escrita de JSON**  
-  - Carrega dados de entrada em `data/input/sample_data.json`.  
-  - Gera relatório em `data/output/report.json`.
+- **JSON I/O**  
+  - Entrada em `data/input/sample_data.json`  
+  - Saída em `data/output/report.json`, agora com carimbo `measured_at` (timestamp da análise)
 - **Cálculo de perdas**  
-  - Classe `Colheita` calcula produtividade e perda (em toneladas e percentual).  
-  - Funções de estatística e gráfico de comparação.
-- **Banco de dados**  
-  - **SQLite** (fallback automático).  
-  - **Oracle** (se você criar `config_oracle.json` e tiver serviço rodando).
-- **Relatório e recomendações**  
-  - Texto no console + JSON.  
-  - Sugestões de ajustes com base nas perdas.
-- **Estrutura modular**  
-  - Subalgoritmos (funções/procedimentos), listas, dicionários, JSON, classes.
+  - `Colheita`: produtividade, perda (toneladas + percentual)  
+  - Estatísticas gerais e por tipo, gráfico comparativo
+- **Recomendações**  
+  - Sugestões automáticas de ajustes conforme perda percentual
+- **Persistência em BD**  
+  - **SQLite** local: `data/local.db`  
+  - **Oracle XE** (opcional), via `config_oracle.json`
+- **Arquitetura modular**  
+  - Funções e classes (data loader, cálculo, relatório, DB)  
+  - Uso de listas, dicionários e JSON
 
 ---
 
 ## 🗂️ Estrutura de pastas
 
-```txt
+```
 analise-perdas-cana/
 │
-├─ .venv/                    # ambiente virtual Python  
+├─ .venv/                    # virtualenv Python  
 ├─ data/
 │   ├─ input/
-│   │   └─ sample_data.json  # dados de exemplo  
-│   └─ output/
-│       └─ report.json       # relatório gerado  
+│   │   └─ sample_data.json  
+│   ├─ output/
+│   │   └─ report.json       # JSON gerado  
+│   └─ local.db              # SQLite gerado  
 │
 ├─ src/
-│   ├─ data_loader.py        # ler/gravar JSON  
-│   ├─ loss_calculator.py    # classe Colheita, estatísticas e gráfico  
-│   ├─ report_generator.py   # montar relatório + recomendações  
-│   ├─ db_manager.py         # persistência SQL (SQLite/Oracle)  
-│   └─ main.py               # script principal  
+│   ├─ data_loader.py        # ler / gravar JSON  
+│   ├─ loss_calculator.py    # classe Colheita + estatísticas + gráfico  
+│   ├─ report_generator.py   # adiciona `strategy` + `measured_at`  
+│   ├─ db_manager.py         # cria tabela com coluna `measured_at`, insere no SQLite/Oracle  
+│   └─ main.py               # fluxo principal  
 │
 ├─ config_oracle.json        # **(opcional)** credenciais Oracle  
-├─ requirements.txt          # dependências  
-└─ README.md
+├─ requirements.txt          # deps  
+└─ README.md                 # este arquivo  
 ```
 
 ---
@@ -59,20 +61,22 @@ analise-perdas-cana/
 
 ---
 
-## 📥 Instalação
+## 📥 Instalação e setup
 
-1. Clone este repositório  
+1. **Clone**  
    ```bash
    git clone https://github.com/seu-usuario/analise-perdas-cana.git
    cd analise-perdas-cana
    ```
-2. Crie e ative um *virtualenv*  
+2. **Virtualenv**  
    ```bash
    python -m venv .venv
-   source .venv/bin/activate    # macOS / Linux
-   .venv\Scripts\activate       # Windows
+   # macOS / Linux
+   source .venv/bin/activate
+   # Windows
+   .venv\Scripts\activate
    ```
-3. Instale as dependências  
+3. **Deps**  
    ```bash
    pip install -r requirements.txt
    ```
@@ -81,7 +85,7 @@ analise-perdas-cana/
 
 ## 🔧 Configuração do Oracle (opcional)
 
-Se quiser testar conexão Oracle, crie um `config_oracle.json` na raiz:
+Se quiser usar Oracle em vez de SQLite, crie na raiz um `config_oracle.json`:
 
 ```json
 {
@@ -93,7 +97,7 @@ Se quiser testar conexão Oracle, crie um `config_oracle.json` na raiz:
 }
 ```
 
-> **Nota**: se não houver Oracle ativo ou faltar credenciais, o projeto usará **automatically** um banco SQLite local em `data/local.db`.
+Caso falhe a conexão Oracle, o código automaticamente cai no **SQLite**.
 
 ---
 
@@ -103,37 +107,37 @@ Se quiser testar conexão Oracle, crie um `config_oracle.json` na raiz:
 python src/main.py
 ```
 
-O fluxo será:
+O que acontece:
 
-1. **Carregar** `data/input/sample_data.json`  
-2. **Calcular** perdas e estatísticas  
-3. **Gerar** recomendações e imprimir no console  
-4. **Salvar** JSON em `data/output/report.json`  
-5. **Persistir** resultados em `data/local.db`  
-
----
-
-## 🔍 Visualizando o banco
-
-1. Abra o **DB Browser for SQLite**  
-2. **Open Database** → selecione `data/local.db`  
-3. Aba **Browse Data** → tabela `perdas_colheita`  
-
-Você verá colunas como:
-
-| id | fazenda   | safra | toneladas_m | toneladas_man | loss_percent | strategy                            |
-|----|-----------|-------|-------------|---------------|--------------|-------------------------------------|
-| 1  | Fazenda A | 2024  | 1000.0      | 950.0         | 5.26         | Ajustar calibração da colhedora.    |
-| 2  | Sítio B   | 2024  |  800.0      | 780.0         | 2.56         | Parâmetros OK — sem ação necessária.|
+1. **Carrega** `data/input/sample_data.json`  
+2. **Calcula** perdas e estatísticas  
+3. **Gera** recomendações e imprime no console  
+4. **Adiciona** campo `"measured_at": "YYYY‑MM‑DD HH:MM:SS.ssssss"` em cada registro  
+5. **Salva** JSON em `data/output/report.json`  
+6. **Persiste** tudo em `data/local.db` (tabela `perdas_colheita`)
 
 ---
 
-## 📈 Melhorias sugeridas
+## 🔍 Ver o banco (SQLite)
 
-- **Timestamp** em cada registro (`measured_at`) para histórico completo.  
-- Validação de dados de entrada (tipos e campos obrigatórios).  
-- CLI com `argparse` para parâmetros de entrada/saída.  
-- **Upsert** no banco ao invés de sempre deletar tudo.
+1. Abrir **DB Browser for SQLite**  
+2. **Open Database** → `data/local.db`  
+3. Aba **Browse Data**, selecione tabela `perdas_colheita`  
+
+| id | fazenda   | safra | toneladas_m | toneladas_man | loss_percent | strategy                            | measured_at               |
+|----|-----------|-------|-------------|---------------|--------------|-------------------------------------|---------------------------|
+| 1  | Fazenda A | 2024  | 1000.0      | 950.0         | 5.26         | Ajustar calibração da colhedora.    | 2025-04-21 17:08:08.426346|
+| 2  | Sítio B   | 2024  |  800.0      | 780.0         | 2.56         | Parâmetros OK — sem ação necessária.| 2025-04-21 17:08:08.426349|
+
+---
+
+## 💡 Próximas melhorias
+
+- Validação de entrada (tipos, campos obrigatórios)  
+- CLI com `argparse` para definir paths na linha de comando  
+- **Upsert** ao invés de truncate+insert no BD  
+- Dash/Web UI para visualização interativa  
+- Suporte a PostgreSQL/MySQL  
 
 ---
 
@@ -146,4 +150,5 @@ Você verá colunas como:
 ---
 
 > **Autor:** Rafael Jordão  
-> **Data:** 21/04/2025 
+> **Data:** 21/04/2025  
+> **Versão:** 1.1 – adiciona `measured_at` no JSON e no BD  
