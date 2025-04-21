@@ -27,7 +27,7 @@ class DBManager:
         self._ensure_table()
 
     def _ensure_table(self):
-        # Cria tabela de perdas caso não exista
+        # Cria tabela de perdas caso não exista, agora com timestamp
         c = self.conn.cursor()
         c.execute('''
             CREATE TABLE IF NOT EXISTS perdas_colheita (
@@ -37,26 +37,28 @@ class DBManager:
               toneladas_m   REAL,
               toneladas_man REAL,
               loss_percent  REAL,
-              strategy      TEXT
+              strategy      TEXT,
+              measured_at   TEXT
             )
         ''')
         self.conn.commit()
 
     def insert(self, recs: List[Dict]):
-        # Insere as perdas no banco
+        # Insere as perdas no banco, incluindo measured_at
         c = self.conn.cursor()
         for r in recs:
             c.execute('''
                 INSERT INTO perdas_colheita
-                  (fazenda, safra, toneladas_m, toneladas_man, loss_percent, strategy)
-                VALUES (?, ?, ?, ?, ?, ?)
+                  (fazenda, safra, toneladas_m, toneladas_man, loss_percent, strategy, measured_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
             ''', (
                 r['fazenda'],
                 r['safra'],
                 r['toneladas_mecanica'],
                 r['toneladas_manual'],
                 r['loss'],
-                r['strategy']
+                r['strategy'],
+                r['measured_at']
             ))
         self.conn.commit()
 
