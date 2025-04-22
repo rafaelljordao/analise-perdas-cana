@@ -6,7 +6,7 @@
     "toneladas_manual": 950.0,
     "loss": 5.26,
     "strategy": "Ajustar calibração da colhedora.",
-    "measured_at": "2025-04-21 17:08:08.426346"
+    "measured_at": "2025-04-21 17:36:28.199491"
   },
   {
     "fazenda": "Sítio B",
@@ -15,6 +15,6 @@
     "toneladas_manual": 780.0,
     "loss": 2.56,
     "strategy": "Parâmetros OK — sem ação necessária.",
-    "measured_at": "2025-04-21 17:08:08.426349"
+    "measured_at": "2025-04-21 17:36:28.199494"
   }
 ]
